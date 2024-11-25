@@ -1,0 +1,23 @@
+import asyncio
+from telethon import TelegramClient, events
+
+# Substitua pelos seus próprios valores
+api_id = 'YOUR_API_ID'
+api_hash = 'YOUR_API_HASH'
+source_group = 'source_group_username_or_id'
+backup_group = 'backup_group_username_or_id'
+delay_seconds = 5  # Defina o tempo de delay em segundos
+
+client = TelegramClient('session_name', api_id, api_hash)
+
+@client.on(events.NewMessage(chats=source_group))
+async def handler(event):
+    await asyncio.sleep(delay_seconds)  # Adiciona o delay
+    message = event.message
+    if message.media:  # Verifica se a mensagem contém mídia
+        await client.send_file(backup_group, message.media)
+    else:
+        await client.send_message(backup_group, message.text)
+
+client.start()
+client.run_until_disconnected()
